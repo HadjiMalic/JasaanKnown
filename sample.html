@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Data Display with XPath</title>
+    <style>
+        /* Some basic styling for readability */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #xmlData {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>XML Data Display with XPath</h1>
+    <div id="xmlData"></div>
+
+    <script>
+        // JavaScript to load and display XML data with XPath
+        fetch('students.xml')
+            .then(response => response.text())
+            .then(xml => {
+                // Parse XML data
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xml, 'text/xml');
+
+                // Define XPath queries
+                const studentNames = xmlDoc.evaluate('/students/student/name', xmlDoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                const studentAges = xmlDoc.evaluate('/students/student/age', xmlDoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                const studentGrades = xmlDoc.evaluate('/students/student/grades', xmlDoc, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+
+                // Display student information
+                const xmlData = document.getElementById('xmlData');
+                for (let i = 0; i < studentNames.snapshotLength; i++) {
+                    const name = studentNames.snapshotItem(i).textContent;
+                    const age = studentAges.snapshotItem(i).textContent;
+                    const grades = studentGrades.snapshotItem(i).textContent;
+                    xmlData.innerHTML += `<p><strong>Name:</strong> ${name}, <strong>Age:</strong> ${age}, <strong>Grades:</strong> ${grades}</p>`;
+                }
+            })
+            .catch(error => console.error('Error loading XML:', error));
+    </script>
+</body>
+</html>
